@@ -5,7 +5,7 @@ const user = require("./models/user");
 require("dotenv").config();
 const { GoogleGenerativeAI } = require("@google/generative-ai"); // Changed import
 const multer = require("multer");
-const Stripe = require('stripe');
+const { default: rateLimit } = require("express-rate-limit");
 const upload = multer();
 
 const app = express();
@@ -85,7 +85,7 @@ app.get("/user/search", (req, res) => {
 });
 
 //Gemini API
-const genAI = new GoogleGenerativeAI("AIzaSyAPACEj3b0XgYlomd5vhE9ZBHDdSX33kkc"); // Changed initialization
+const genAI = new GoogleGenerativeAI("AIzaSyCfNFpZKRuhYPArx90H23YDSbUNH7-Axlo"); // Changed initialization
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Changed model initialization
 
 app.post("/analyze", upload.single("image"), async (req, res) => {
@@ -252,6 +252,83 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
     });
   }
 });
+
+// Setup rate limiting
+// const limiter = rateLimit({
+//   windowMs: 60 * 1000, // 1 minute
+//   max: 10, // Limit each IP to 10 requests per minute
+// });
+
+// app.use("/chat", limiter);
+
+// // Helper function for retry logic with backoff
+// async function callApiWithRetry(apiCall, retries = 3, delay = 1000) {
+//   try {
+//     return await apiCall();
+//   } catch (err) {
+//     if (retries > 0 && err.status === 429) {
+//       console.log("Rate limit exceeded. Retrying...");
+//       await new Promise(resolve => setTimeout(resolve, delay)); // Delay before retrying
+//       return callApiWithRetry(apiCall, retries - 1, delay * 2); // Exponential backoff
+//     }
+//     throw err; // Re-throw error if retries are exhausted or it's a different error
+//   }
+// }
+
+// // POST route to handle chat requests
+// app.post("/chat", async (req, res) => {
+//   try {
+//     const user = req.body.user || "";
+
+//     // Validate the input
+//     if (!user) {
+//       return res.status(400).json({ error: "User query is required." });
+//     }
+
+//     console.log("User query ->", user);
+
+//     const prompt = `Give an answer related only to coding. User query: ${user}. Always respond in JSON format.`;
+
+//     // Call the API with retry logic
+//     const result = await callApiWithRetry(() => model.generateContent([prompt]));
+//     const response = await result.response;
+//     console.log("API response:", response);
+
+//     const text = await response.text();
+//     const jsonStringMatch = text.match(/```json\n([\s\S]*?)\n```/);
+
+//     if (!jsonStringMatch) {
+//       return res.status(500).json({ error: "Invalid response format" });
+//     }
+
+//     const jsonString = jsonStringMatch[1].trim(); // Extracted JSON string
+
+//     // Clean up the JSON string by removing comments (lines starting with //)
+//     const jsonStringWithoutComments = jsonString.replace(/\/\/.*$/gm, "").trim();
+
+//     // Parse the cleaned JSON string
+//     const structuredData = JSON.parse(jsonStringWithoutComments);
+
+//     // Return the structured data as JSON
+//     return res.json({ analysis: structuredData });
+
+//   } catch (error) {
+//     console.error("Error Processing Gemini API:", error);
+
+//     if (error.status === 429) {
+//       return res.status(429).json({
+//         error: "Rate limit exceeded. Please try again later.",
+//       });
+//     }
+
+//     // Catch other types of errors
+//     return res.status(500).json({
+//       error: "An error occurred while processing the request.",
+//       details: error.message || error.toString(),
+//     });
+//   }
+// });
+
 
 // const stripe = Stripe('sk_test_51Qcfr2LtY98Hku9KnFO3sPhdlF5eKZtGuxYViMiJ9A9576atLBOa5cC4w8Aju3ageUoKgg5KoJmxWfX9ArNJYoYH00sEhB8gzm'); // Replace with your actual secret key
 
