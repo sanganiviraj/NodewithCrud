@@ -154,30 +154,34 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
     // Create prompt based on product category
     const generatePrompt = (category) => {
       const fixedResponseKeys = `
-        Instructions:
-        Always include the following fixed keys in the JSON response:
-        - productName: The name of the product.
-        - ingredients: List of ingredients.
-        - safetyAssessment: A general safety evaluation.
-        - sideEffects: Potential side effects.
-        - userQuestionResponse: Address the user question.
-        - usageInstructions: Instructions for proper usage.
-        - storageInstructions: Storage guidelines.
-        - expiryDate: If no date is visible, estimate an expiry date based on the product category:
-            - For grocery products, assume an expiry of 6 months from the current date.
-            - For skincare products, assume 1 to 3 years from the current date.
-            - For food products, assume 6 months to 1 year from the current date.
-            - For supplements, assume 2 to 3 years from the current date.
-            - For medicines, assume 1 to 2 years from the current date.       
-        - shelfLife: Product shelf life, if available.
-        - productBenefits: Key product benefits.
-        - warnings: Health or safety warnings.
-        - nutrientComposition: Nutrient breakdown with percentages.
-        - contraindications: Specific contraindications, if any.
-        - ageRestrictions: Suitable age groups or restrictions.
-        - additionalRecommendations: Extra recommendations.
-        If a key is not applicable, include it with a value of null or an empty string.
-    `;
+      Instructions:
+      Always include the following fixed keys in the JSON response, ensuring each key has a consistent data type:
+      - productName: A string representing the name of the product. (Type: string)
+      - ingredients: An array of strings, each representing an ingredient. (Type: array of strings)
+      - safetyAssessment: A string summarizing the general safety evaluation. (Type: string)
+      - sideEffects: An array of strings, each representing a potential side effect. (Type: array of strings)
+      - userQuestionResponse: A string that addresses the user's question. (Type: string)
+      - usageInstructions: An array of strings, each representing a usage instruction. (Type: array of strings)
+      - storageInstructions: An array of strings, each representing a storage guideline. (Type: array of strings)
+      - expiryDate: A string representing the expiry date in ISO format (YYYY-MM-DD). If no date is visible, estimate an expiry date based on the product category:
+          - For grocery products, assume an expiry of 6 months from the current date.
+          - For skincare products, assume 1 to 3 years from the current date.
+          - For food products, assume 6 months to 1 year from the current date.
+          - For supplements, assume 2 to 3 years from the current date.
+          - For medicines, assume 1 to 2 years from the current date. (Type: string)
+      - shelfLife: A string representing the product's shelf life (e.g., "6 months", "1 year"). (Type: string)
+      - productBenefits: An array of strings, each representing a key product benefit. (Type: array of strings)
+      - warnings: An array of strings, each representing a health or safety warning. (Type: array of strings)
+      - nutrientComposition: An object where each key is a nutrient name (e.g., "Protein", "Fat"), and the value is a string representing the percentage (e.g., "20%"). (Type: object)
+      - contraindications: An array of strings, each representing a specific contraindication. (Type: array of strings)
+      - ageRestrictions: A string specifying suitable age groups or restrictions. (Type: string)
+      - additionalRecommendations: An array of strings, each representing an extra recommendation. (Type: array of strings)
+      
+      If a key is not applicable, include it with a value of null or an empty string, depending on the type:
+      - For strings: Use an empty string ("").
+      - For arrays: Use an empty array ([]).
+      - For objects: Use an empty object ({}).
+      `;
 
       switch (category) {
         case "grocery":
