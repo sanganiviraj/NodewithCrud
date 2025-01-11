@@ -172,7 +172,15 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
       - shelfLife: A string representing the product's shelf life (e.g., "6 months", "1 year"). (Type: string)
       - productBenefits: An array of strings, each representing a key product benefit. (Type: array of strings)
       - warnings: An array of strings, each representing a health or safety warning. (Type: array of strings)
-      - nutrientComposition: An object where each key is a nutrient name (e.g., "Protein", "Fat"), and the value is a string representing the percentage (e.g., "20%"). (Type: object)
+      - nutrientComposition: A list of nutrients, where each nutrient is represented as an object containing:
+        - name: The nutrient name (e.g., "Protein"). (Type: string),
+        - mg: The amount in milligrams. (Type: string or number)
+        - percentage: The percentage of the daily value. (Type: string)
+        Example: 
+        [
+          { "name": "Protein", "mg": "20mg", "percentage": "15%" },
+          { "name": "Fat", "mg": "10mg", "percentage": "8%" }
+        ]    
       - contraindications: An array of strings, each representing a specific contraindication. (Type: array of strings)
       - ageRestrictions: A string specifying suitable age groups or restrictions. (Type: string)
       - additionalRecommendations: An array of strings, each representing an extra recommendation. (Type: array of strings)
