@@ -176,11 +176,13 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
         - name: The nutrient name (e.g., "Protein"). (Type: string),
         - mg: The amount in milligrams. (Type: string or number)
         - percentage: The percentage of the daily value. (Type: string)
+        (mg and percentage is require field if any nutrient not have a mg or percentage so don't share it in nutrientcompositon)
         Example: 
         [
           { "name": "Protein", "mg": "20mg", "percentage": "15%" },
           { "name": "Fat", "mg": "10mg", "percentage": "8%" }
-        ]    
+        ]
+        and if you not find a mg or percentage so no need to add nutrient name in nutrientcomposition.
       - contraindications: An array of strings, each representing a specific contraindication. (Type: array of strings)
       - ageRestrictions: A string specifying suitable age groups or restrictions. (Type: string)
       - additionalRecommendations: An array of strings, each representing an extra recommendation. (Type: array of strings)
